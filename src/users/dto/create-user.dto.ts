@@ -1,4 +1,4 @@
-import { IsString } from 'class-validator';
+import { IsString, IsOptional } from 'class-validator';
 
 export class CreateUserDto {
     @IsString()
@@ -9,4 +9,8 @@ export class CreateUserDto {
 
     @IsString()
     password: string;
+
+    @IsString()
+    @IsOptional() // si quieres que el rol por defecto sea 'cliente'
+    role?: 'cliente' | 'vendedor' | 'admin';
 }
