@@ -4,7 +4,7 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { CategoriesModule } from './categories/categories.module';
-import { PostsModule } from './posts/posts.module';
+import { NoticesModule } from './Notice/notices.module';
 import { ProductsModule } from './products/products.module';
 import { MovementsModule } from './movements/movements.module';
 import { SuppliersModule } from './suppliers/suppliers.module';
@@ -28,7 +28,7 @@ import { ConfigModule } from '@nestjs/config';
     AuthModule,
     UsersModule,
     CategoriesModule,
-    PostsModule,
+    NoticesModule,
     ProductsModule,
     MovementsModule,
     SuppliersModule,
