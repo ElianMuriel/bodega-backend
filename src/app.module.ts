@@ -9,22 +9,25 @@ import { ProductsModule } from './products/products.module';
 import { MovementsModule } from './movements/movements.module';
 import { SuppliersModule } from './suppliers/suppliers.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
+import { LogsModule } from './logs/logs.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: process.env.DB_HOST,
-      port: parseInt(process.env.DB_PORT || '5432', 10),
-      username: process.env.DB_USER,
-      password: process.env.DB_PASS,
-      database: process.env.DB_NAME,
-      entities: [__dirname + '/**/*.entity{.ts,.js}'],
-      synchronize: true,
-      ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+    TypeOrmModule.forRootAsync({
+      useFactory: () => ({
+        type: 'postgres',
+        url: process.env.DATABASE_URL,
+        entities: [__dirname + '/**/*.entity{.ts,.js}'],
+        synchronize: true,
+        ssl: {
+          rejectUnauthorized: false,
+        },
+      }),
     }),
+    MongooseModule.forRoot(process.env.MONGODB_URI!), // 👈 ESTA LÍNEA ES CLAVE
     AuthModule,
     UsersModule,
     CategoriesModule,
@@ -32,7 +35,7 @@ import { ConfigModule } from '@nestjs/config';
     ProductsModule,
     MovementsModule,
     SuppliersModule,
-    
+    LogsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
