@@ -11,14 +11,25 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-  ) {}
+  ) { }
 
   async create(createUserDto: CreateUserDto) {
-    const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
-    const user = this.userRepository.create({
-      ...createUserDto,
-      password: hashedPassword,
+    const existingUser = await this.userRepository.findOne({
+      where: { email: createUserDto.email },
     });
+    if (existingUser) {
+      throw new Error('El email ya está registrado');
+    }
+
+    const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
+
+    const user = this.userRepository.create({
+      username: createUserDto.username ?? createUserDto.email.split('@')[0] + Date.now(),
+      email: createUserDto.email,
+      password: hashedPassword,
+      role: createUserDto.role ?? 'cliente',
+    });
+
     return this.userRepository.save(user);
   }
 
