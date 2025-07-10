@@ -11,7 +11,6 @@ import { SuppliersModule } from './suppliers/suppliers.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
-import { LogsModule } from './logs/logs.module';
 
 @Module({
   imports: [
@@ -35,7 +34,6 @@ import { LogsModule } from './logs/logs.module';
     ProductsModule,
     MovementsModule,
     SuppliersModule,
-    LogsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
