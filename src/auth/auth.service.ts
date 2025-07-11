@@ -2,9 +2,13 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 import * as bcrypt from 'bcrypt';
+import { CreateUserDto } from 'src/users/dto/create-user.dto';
 
 @Injectable()
 export class AuthService {
+  register(createUserDto: CreateUserDto) {
+    throw new Error('Method not implemented.');
+  }
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
