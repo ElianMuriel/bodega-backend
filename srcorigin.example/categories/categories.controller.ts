@@ -4,9 +4,8 @@ import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { ConditionalUseGuards } from 'src/common/decorators/conditional-guards.decorator';
 
-@ConditionalUseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard)
 @Controller('categories')
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
@@ -36,4 +35,3 @@ export class CategoriesController {
     return this.categoriesService.remove(id);
   }
 }
-
