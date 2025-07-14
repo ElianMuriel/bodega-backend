@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Req, UseGuards } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { ConditionalUseGuards } from '../common/decorators/conditional-use-guards.decorator';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -16,8 +16,8 @@ export class ProductsController {
   }
 
   // 🔐 Protegido: crear producto (solo admins y vendedores)
-  @ConditionalUseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin', 'seller')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin', 'vendedor')
   @Post()
   async create(@Body() createProductDto: any, @Req() req: any) {
     return this.productsService.create(createProductDto, req.user);

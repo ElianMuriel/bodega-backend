@@ -6,7 +6,7 @@ import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { ConditionalUseGuards } from 'src/common/decorators/conditional-guards.decorator';
 
-@ConditionalUseGuards(JwtAuthGuard)
+
 @Controller('categories')
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
