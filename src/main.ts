@@ -6,7 +6,7 @@ async function bootstrap() {
 
   // 👇 Habilitar CORS para permitir llamadas desde el frontend
   app.enableCors({
-    origin: '*', // 🔥 tu frontend
+    origin: '*', //frontend
     credentials: true,
   });
 
