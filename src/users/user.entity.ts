@@ -17,6 +17,6 @@ export class User {
     @Column({ type: 'enum', enum: ['cliente', 'vendedor', 'admin'], default: 'cliente' })
     role: string;
 
-    @Column()
+    @Column({ nullable: true })
     phone: string;
 }
