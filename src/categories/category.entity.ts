@@ -7,4 +7,7 @@ export class Category {
 
   @Column()
   name: string;
+
+  @Column('text', { nullable: true })
+  description?: string;
 }

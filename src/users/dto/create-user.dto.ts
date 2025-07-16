@@ -11,6 +11,10 @@ export class CreateUserDto {
     password: string;
 
     @IsString()
-    @IsOptional() // si quieres que el rol por defecto sea 'cliente'
+    @IsOptional()
     role?: 'cliente' | 'vendedor' | 'admin';
+
+    @IsString()
+    @IsOptional()
+    phone?: string;
 }

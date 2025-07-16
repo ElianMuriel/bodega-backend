@@ -5,7 +5,7 @@ export class User {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @Column({ unique: true })
+    @Column()
     username: string;
 
     @Column({ unique: true })
@@ -16,4 +16,7 @@ export class User {
 
     @Column({ type: 'enum', enum: ['cliente', 'vendedor', 'admin'], default: 'cliente' })
     role: string;
+
+    @Column({ nullable: true })
+    phone: string;
 }
