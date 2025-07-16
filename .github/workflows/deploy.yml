@@ -1,4 +1,4 @@
-name: 🚀 Deploy NestJS Blog Backend API to VPS
+name: 🚀 Deploy NestJS Bodega Backend API to VPS
 
 on:
   push:
@@ -19,7 +19,7 @@ jobs:
         username: ${{ secrets.VPS_USER }}
         key: ${{ secrets.VPS_KEY }}
         source: "."
-        target: "/root/muriel_elian/bodega_backend"
+        target: "/root/muriel_elian/nestjs-bodega-backend"
 
     - name: Run deploy commands on VPS
       uses: appleboy/ssh-action@v1.0.3
@@ -28,8 +28,20 @@ jobs:
         username: ${{ secrets.VPS_USER }}
         key: ${{ secrets.VPS_KEY }}
         script: |
-          cd /root/muriel_elian/bodega_backend
-          echo "$${{ secrets.ENV_FILE }}" > .env
+          cd /root/muriel_elian/nestjs-bodega-backend
+          
+          # Matar el proceso que está usando el puerto 3004
+          echo "Matar proceso en el puerto 3004..."
+          sudo lsof -t -i:3004 | xargs sudo kill -9  # Mata el proceso que usa el puerto 3004
+          
+          # Asegúrate de que el archivo .env se copie correctamente
+          echo -e "${{ secrets.ENV_FILE }}" > .env
+          
+          # Instalar dependencias, construir y reiniciar la aplicación
           npm install
           npm run build
-          pm2 restart bodega_backend-app || pm2 start dist/main.js --name bodega_backend-app
+          
+          # Reiniciar PM2 con el nuevo código
+          pm2 stop nestjs-bodega-backend-api || true  # Detener el proceso si está en ejecución
+          pm2 delete nestjs-bodega-backend-api || true  # Eliminar el proceso si ya está activo
+          pm2 start dist/main.js --name nestjs-bodega-backend-api  # Iniciar el proceso desde el archivo compilado
