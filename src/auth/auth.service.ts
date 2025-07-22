@@ -9,30 +9,25 @@ export class AuthService {
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
-  ) {}
+  ) { }
 
   async register(createUserDto: CreateUserDto) {
-    const existingUser = await this.usersService.findByEmail(createUserDto.email);
-    if (existingUser) {
-      throw new ConflictException('El correo electrónico ya está registrado');
-    }
-
-    const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
-    const user = await this.usersService.create({
-      ...createUserDto,
-      password: hashedPassword,
-      role: 'cliente', // 🚨 IMPORTANTE: por defecto todos son clientes
-    });
-
+    const user = await this.usersService.create(createUserDto);
     const { password, ...result } = user;
     return result;
   }
 
   async validateUser(email: string, pass: string): Promise<any> {
     const user = await this.usersService.findByEmail(email);
-    if (user && await bcrypt.compare(pass, user.password)) {
-      const { password, ...result } = user;
-      return result;
+    console.log("User found:", user);
+    if (user) {
+      // 👇 Compara la contraseña ingresada con el hash en la DB
+      const isMatch = await bcrypt.compare(pass, user.password);
+      console.log("Password match:", isMatch);
+      if (isMatch) {
+        const { password, ...result } = user;
+        return result;
+      }
     }
     return null;
   }
@@ -45,7 +40,7 @@ export class AuthService {
         id: user.id,
         email: user.email,
         role: user.role,
-      }
+      },
     };
   }
 }

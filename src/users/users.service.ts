@@ -13,7 +13,7 @@ export class UsersService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     private logsService: LogsService,
-  ) {}
+  ) { }
 
   async create(createUserDto: CreateUserDto) {
     const existingUser = await this.userRepository.findOne({
@@ -23,7 +23,11 @@ export class UsersService {
       throw new Error('El email ya está registrado');
     }
 
-    const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
+    let hashedPassword = createUserDto.password;
+    // 👇 Solo hashea si no parece hash de bcrypt
+    if (!hashedPassword.startsWith('$2b$') && !hashedPassword.startsWith('$2a$')) {
+      hashedPassword = await bcrypt.hash(hashedPassword, 10);
+    }
 
     const user = this.userRepository.create({
       username: createUserDto.username ?? createUserDto.email.split('@')[0] + Date.now(),

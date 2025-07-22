@@ -6,14 +6,14 @@ import { ConditionalUseGuards } from '../common/decorators/conditional-use-guard
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService) { }
 
-@ConditionalUseGuards(LocalAuthGuard)
-@Post('login')
-async login(@Request() req) {
-  return this.authService.login(req.user);
-}
-  
+  @ConditionalUseGuards(LocalAuthGuard)
+  @Post('login')
+  async login(@Request() req) {
+    return this.authService.login(req.user);
+  }
+
   @Post('register')
   async register(@Body() createUserDto: CreateUserDto) {
     return this.authService.register(createUserDto);
