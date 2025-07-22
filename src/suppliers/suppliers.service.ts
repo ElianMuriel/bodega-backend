@@ -1,15 +1,16 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Supplier } from './suppliers.entity';
-import { NotFoundException } from '@nestjs/common';
+import { LogsService } from '../logs/logs.service';
 
 @Injectable()
 export class SuppliersService {
     constructor(
         @InjectRepository(Supplier)
         private suppliersRepository: Repository<Supplier>,
-    ) { }
+        private logsService: LogsService, 
+    ) {}
 
     findAll(): Promise<Supplier[]> {
         return this.suppliersRepository.find();
@@ -23,17 +24,40 @@ export class SuppliersService {
         return supplier;
     }
 
-    create(data: Partial<Supplier>): Promise<Supplier> {
+    async create(data: Partial<Supplier>): Promise<Supplier> {
         const supplier = this.suppliersRepository.create(data);
-        return this.suppliersRepository.save(supplier);
+        const saved = await this.suppliersRepository.save(supplier);
+
+        await this.logsService.create(
+            'created_supplier',
+            `Se creó el proveedor ${saved.name}`,
+            'admin',
+        );
+
+        return saved;
     }
 
     async update(id: string, data: Partial<Supplier>): Promise<Supplier> {
         await this.suppliersRepository.update(id, data);
-        return this.findOne(id);
+        const updated = await this.findOne(id);
+
+        await this.logsService.create(
+            'updated_supplier',
+            `Se actualizó el proveedor ${updated.name}`,
+            'admin',
+        );
+
+        return updated;
     }
 
     async remove(id: string): Promise<void> {
+        const supplier = await this.findOne(id);
         await this.suppliersRepository.delete(id);
+
+        await this.logsService.create(
+            'deleted_supplier',
+            `Se eliminó el proveedor ${supplier.name}`,
+            'admin',
+        );
     }
 }

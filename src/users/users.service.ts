@@ -5,13 +5,15 @@ import { User } from './user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import * as bcrypt from 'bcrypt';
+import { LogsService } from '../logs/logs.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-  ) { }
+    private logsService: LogsService,
+  ) {}
 
   async create(createUserDto: CreateUserDto) {
     const existingUser = await this.userRepository.findOne({
@@ -30,7 +32,15 @@ export class UsersService {
       role: createUserDto.role ?? 'cliente',
     });
 
-    return this.userRepository.save(user);
+    const saved = await this.userRepository.save(user);
+
+    await this.logsService.create(
+      'created_user',
+      `Se creó el usuario ${saved.username} (${saved.email})`,
+      'admin',
+    );
+
+    return saved;
   }
 
   findAll() {
@@ -40,6 +50,7 @@ export class UsersService {
   findOne(id: string) {
     return this.userRepository.findOne({ where: { id } });
   }
+
   async findByEmail(email: string) {
     return this.userRepository.findOne({ where: { email } });
   }
@@ -53,12 +64,29 @@ export class UsersService {
     }
 
     Object.assign(user, updateUserDto);
-    return this.userRepository.save(user);
+    const updated = await this.userRepository.save(user);
+
+    await this.logsService.create(
+      'updated_user',
+      `Se actualizó el usuario ${updated.username} (${updated.email})`,
+      'admin',
+    );
+
+    return updated;
   }
 
   async remove(id: string) {
     const user = await this.userRepository.findOne({ where: { id } });
     if (!user) return null;
-    return this.userRepository.remove(user);
+
+    await this.userRepository.remove(user);
+
+    await this.logsService.create(
+      'deleted_user',
+      `Se eliminó el usuario ${user.username} (${user.email})`,
+      'admin',
+    );
+
+    return;
   }
 }

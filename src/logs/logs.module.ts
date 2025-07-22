@@ -8,5 +8,6 @@ import { Log, LogSchema } from './log.schema';
   imports: [MongooseModule.forFeature([{ name: Log.name, schema: LogSchema }])],
   controllers: [LogsController],
   providers: [LogsService],
+  exports: [LogsService]
 })
 export class LogsModule {}
