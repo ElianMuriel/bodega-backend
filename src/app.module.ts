@@ -26,7 +26,7 @@ import { ConfigModule } from '@nestjs/config';
         },
       }),
     }),
-    MongooseModule.forRoot(process.env.MONGODB_URI!), // 👈 ESTA LÍNEA ES CLAVE
+    MongooseModule.forRoot(process.env.MONGODB_URI!),
     AuthModule,
     UsersModule,
     CategoriesModule,

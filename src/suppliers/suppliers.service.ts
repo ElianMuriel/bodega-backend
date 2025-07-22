@@ -2,25 +2,26 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Supplier } from './suppliers.entity';
+import { NotFoundException } from '@nestjs/common';
 
 @Injectable()
 export class SuppliersService {
     constructor(
         @InjectRepository(Supplier)
         private suppliersRepository: Repository<Supplier>,
-    ) {}
+    ) { }
 
     findAll(): Promise<Supplier[]> {
         return this.suppliersRepository.find();
     }
 
     async findOne(id: string): Promise<Supplier> {
-    const supplier = await this.suppliersRepository.findOneBy({ id });
-    if (!supplier) {
-        throw new Error(`Supplier with id ${id} not found`);
+        const supplier = await this.suppliersRepository.findOneBy({ id });
+        if (!supplier) {
+            throw new NotFoundException(`Proveedor con id ${id} no encontrado.`);
+        }
+        return supplier;
     }
-    return supplier;
-}
 
     create(data: Partial<Supplier>): Promise<Supplier> {
         const supplier = this.suppliersRepository.create(data);
